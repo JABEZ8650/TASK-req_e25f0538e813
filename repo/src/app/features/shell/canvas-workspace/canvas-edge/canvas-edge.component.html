@@ -1,0 +1,42 @@
+<!-- Hit area (wide invisible stroke for easier clicking) -->
+<svg:path
+  class="edge-hit"
+  [attr.d]="pathD"
+  fill="none"
+  stroke="transparent"
+  stroke-width="12"
+/>
+
+<!-- Visible edge -->
+<svg:path
+  class="edge-line"
+  [attr.d]="pathD"
+  fill="none"
+  [attr.stroke]="selected ? '#818cf8' : edge.style.strokeColor"
+  [attr.stroke-width]="selected ? 2.5 : edge.style.strokeWidth"
+  [attr.stroke-dasharray]="edge.style.strokeDash"
+  [attr.opacity]="edge.style.opacity"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+/>
+
+<!-- Arrow at target -->
+<svg:circle
+  class="edge-arrow"
+  [attr.cx]="targetNode.position.x + targetNode.size.width / 2"
+  [attr.cy]="targetNode.position.y"
+  r="0"
+/>
+
+<!-- Label -->
+@if (edge.label && midPoint) {
+  <svg:text
+    class="edge-label"
+    [attr.x]="midPoint.x"
+    [attr.y]="midPoint.y - 6"
+    text-anchor="middle"
+    dominant-baseline="auto"
+    fill="#94a3b8"
+    font-size="11"
+  >{{ edge.label }}</svg:text>
+}

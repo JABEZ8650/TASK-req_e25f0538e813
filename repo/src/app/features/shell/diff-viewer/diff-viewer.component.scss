@@ -1,0 +1,34 @@
+.diff-viewer { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.hint { font-size: .75rem; color: #64748b; margin: 0; text-align: center; padding: 1rem 0; }
+.compute-btn {
+  padding: 7px 14px; background: #4f46e5; color: #fff; border: none; border-radius: 6px;
+  font-size: .8125rem; font-weight: 600; cursor: pointer;
+  &:hover:not(:disabled) { background: #4338ca; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+.diff-summary { display: flex; align-items: center; justify-content: space-between; }
+.change-count { font-size: .875rem; font-weight: 600; color: #e2e8f0; }
+.refresh-btn {
+  padding: 3px 8px; border: 1px solid #334155; border-radius: 4px; background: #0f172a;
+  color: #94a3b8; font-size: .625rem; cursor: pointer;
+  &:hover { background: #334155; color: #e2e8f0; }
+}
+.diff-section {
+  h4 { margin: 0 0 4px; font-size: .6875rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; }
+}
+.diff-group {
+  display: flex; flex-direction: column; gap: 2px; padding: 6px 8px; border-radius: 5px; margin-bottom: 4px;
+  &.added { background: rgba(34,197,94,.06); }
+  &.removed { background: rgba(239,68,68,.06); }
+  &.modified { background: rgba(234,179,8,.06); }
+}
+.group-label { font-size: .6875rem; font-weight: 600;
+  .added & { color: #22c55e; }
+  .removed & { color: #f87171; }
+  .modified & { color: #eab308; }
+}
+.diff-item { font-size: .75rem; color: #cbd5e1; padding: 1px 0;
+  &.mod { display: flex; justify-content: space-between; gap: 8px; }
+}
+.mod-changes { font-size: .625rem; color: #64748b; }
+.unchanged { font-size: .6875rem; color: #475569; }

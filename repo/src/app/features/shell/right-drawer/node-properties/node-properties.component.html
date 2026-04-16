@@ -1,0 +1,140 @@
+<div class="props">
+  <!-- Type -->
+  <div class="prop-section">
+    <label class="prop-label">Type</label>
+    <span class="type-badge">{{ typeLabel }}</span>
+  </div>
+
+  <!-- Label -->
+  <div class="prop-section">
+    <label class="prop-label" for="np-label">Label</label>
+    <input
+      id="np-label"
+      class="prop-input"
+      [(ngModel)]="label"
+      (focus)="onTextFocus()"
+      (ngModelChange)="onLabelInput()"
+      (blur)="onTextBlur()"
+      [maxlength]="maxLabel"
+      placeholder="Node label"
+    />
+    <span class="char-count">{{ label.length }}/{{ maxLabel }}</span>
+  </div>
+
+  <!-- Notes -->
+  <div class="prop-section">
+    <label class="prop-label" for="np-notes">Notes</label>
+    <textarea
+      id="np-notes"
+      class="prop-input prop-textarea"
+      [(ngModel)]="notes"
+      (focus)="onTextFocus()"
+      (ngModelChange)="onNotesInput()"
+      (blur)="onTextBlur()"
+      [maxlength]="maxNotes"
+      placeholder="Add notes..."
+      rows="3"
+    ></textarea>
+    <span class="char-count">{{ notes.length }}/{{ maxNotes }}</span>
+  </div>
+
+  <!-- Position -->
+  <div class="prop-section">
+    <label class="prop-label">Position</label>
+    <div class="prop-row">
+      <div class="prop-field">
+        <span class="field-prefix">X</span>
+        <input
+          type="number"
+          class="prop-input num"
+          [(ngModel)]="posX"
+          (change)="onPositionChange()"
+        />
+      </div>
+      <div class="prop-field">
+        <span class="field-prefix">Y</span>
+        <input
+          type="number"
+          class="prop-input num"
+          [(ngModel)]="posY"
+          (change)="onPositionChange()"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Size -->
+  <div class="prop-section">
+    <label class="prop-label">Size</label>
+    <div class="prop-row">
+      <div class="prop-field">
+        <span class="field-prefix">W</span>
+        <input
+          type="number"
+          class="prop-input num"
+          [(ngModel)]="width"
+          (change)="onSizeChange()"
+          min="20"
+        />
+      </div>
+      <div class="prop-field">
+        <span class="field-prefix">H</span>
+        <input
+          type="number"
+          class="prop-input num"
+          [(ngModel)]="height"
+          (change)="onSizeChange()"
+          min="20"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Colors -->
+  <div class="prop-section">
+    <label class="prop-label">Colors</label>
+    <div class="prop-row">
+      <div class="color-field">
+        <input
+          type="color"
+          class="color-input"
+          [(ngModel)]="fillColor"
+          (change)="onFillColorChange()"
+        />
+        <span class="color-label">Fill</span>
+      </div>
+      <div class="color-field">
+        <input
+          type="color"
+          class="color-input"
+          [(ngModel)]="strokeColor"
+          (change)="onStrokeColorChange()"
+        />
+        <span class="color-label">Stroke</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metadata (imported fields) -->
+  @if (node.metadata && node.metadata.length > 0) {
+    <div class="prop-section">
+      <label class="prop-label">Metadata</label>
+      <div class="metadata-list">
+        @for (m of node.metadata; track m.key) {
+          <div class="metadata-item" [class.flagged]="!!m.flagged" [title]="m.flagged || ''">
+            <span class="meta-key">{{ m.key }}</span>
+            <span class="meta-val">{{ m.value || '(empty)' }}</span>
+            @if (m.originalValue && m.originalValue !== m.value) {
+              <span class="meta-original">was: {{ m.originalValue }}</span>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Delete -->
+  <div class="prop-section prop-footer">
+    <button class="delete-btn" (click)="deleteNode()">Delete Node</button>
+  </div>
+</div>

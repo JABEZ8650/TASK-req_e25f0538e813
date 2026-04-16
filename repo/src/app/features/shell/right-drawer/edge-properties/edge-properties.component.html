@@ -1,0 +1,51 @@
+<div class="props">
+  <div class="prop-section">
+    <label class="prop-label">Connector</label>
+    <span class="type-badge">Edge</span>
+  </div>
+
+  <div class="prop-section">
+    <label class="prop-label" for="ep-label">Label</label>
+    <input
+      id="ep-label"
+      class="prop-input"
+      [(ngModel)]="label"
+      (focus)="onLabelFocus()"
+      (ngModelChange)="onLabelInput()"
+      (blur)="onLabelBlur()"
+      maxlength="100"
+      placeholder="Edge label"
+    />
+  </div>
+
+  <div class="prop-section">
+    <label class="prop-label" for="ep-type">Routing</label>
+    <select
+      id="ep-type"
+      class="prop-input"
+      [(ngModel)]="edgeType"
+      (ngModelChange)="onTypeChange()"
+    >
+      @for (t of edgeTypes; track t) {
+        <option [value]="t">{{ t }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="prop-section">
+    <label class="prop-label">Color</label>
+    <div class="color-field">
+      <input
+        type="color"
+        class="color-input"
+        [(ngModel)]="strokeColor"
+        (change)="onStrokeColorChange()"
+      />
+      <span class="color-label">Stroke</span>
+    </div>
+  </div>
+
+  <div class="prop-section prop-footer">
+    <button class="delete-btn" (click)="deleteEdge()">Delete Connector</button>
+  </div>
+</div>

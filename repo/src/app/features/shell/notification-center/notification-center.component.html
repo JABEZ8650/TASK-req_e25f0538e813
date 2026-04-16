@@ -1,0 +1,49 @@
+<div class="notif-center">
+  <div class="notif-header">
+    <h3>Notifications</h3>
+    <div class="header-actions">
+      <button class="small-btn" (click)="markAllRead()" title="Mark all read">Read All</button>
+      <button class="small-btn" (click)="showSettings = !showSettings" title="DND settings">DND</button>
+    </div>
+  </div>
+
+  @if (showSettings) {
+    <div class="dnd-settings">
+      <label class="toggle-row">
+        <input type="checkbox" [(ngModel)]="dndEnabled" (change)="saveDnd()" />
+        <span>Do Not Disturb</span>
+      </label>
+      @if (dndEnabled) {
+        <div class="dnd-hours">
+          <label>
+            From
+            <input type="number" min="0" max="23" [(ngModel)]="dndStart" (change)="saveDnd()" class="hour-input" />h
+          </label>
+          <label>
+            to
+            <input type="number" min="0" max="23" [(ngModel)]="dndEnd" (change)="saveDnd()" class="hour-input" />h
+          </label>
+        </div>
+        @if (notifSvc.isDndActive()) {
+          <span class="dnd-active">DND active now</span>
+        }
+      }
+    </div>
+  }
+
+  <div class="notif-list">
+    @for (n of visibleNotifications; track n.id) {
+      <div class="notif-item" [class.unread]="!n.read" (click)="markRead(n.id)">
+        <span class="notif-icon">{{ typeIcon(n.type) }}</span>
+        <div class="notif-body">
+          <span class="notif-title">{{ n.title }}</span>
+          <span class="notif-msg">{{ n.message }}</span>
+          <span class="notif-time">{{ formatTime(n.createdAt) }}</span>
+        </div>
+        <button class="dismiss-btn" (click)="dismiss(n.id); $event.stopPropagation()" title="Dismiss">&times;</button>
+      </div>
+    } @empty {
+      <p class="empty-hint">No notifications.</p>
+    }
+  </div>
+</div>

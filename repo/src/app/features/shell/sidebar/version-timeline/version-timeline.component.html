@@ -1,0 +1,40 @@
+<div class="version-timeline">
+  @if (store.currentCanvas()) {
+    <div class="vt-actions">
+      <button class="save-btn" (click)="createManualSnapshot()">Save Snapshot</button>
+      @if (store.isDirty()) {
+        <span class="dirty-badge">Unsaved changes</span>
+      }
+    </div>
+
+    <div class="vt-list">
+      @for (v of versionSvc.versions(); track v.id) {
+        <div class="vt-entry" [class.manual]="v.type === 'manual'" [class.published]="v.type === 'published'">
+          <div class="vt-entry-header">
+            <span class="vt-type-badge" [attr.data-type]="v.type">{{ typeLabel(v) }}</span>
+            <span class="vt-number">v{{ v.versionNumber }}</span>
+            <span class="vt-time">{{ formatTime(v.createdAt) }}</span>
+          </div>
+
+          @if (confirmingRollback() === v.id) {
+            <div class="rollback-confirm">
+              <p>Restore this version? Current work will be replaced.</p>
+              <div class="confirm-actions">
+                <button class="confirm-btn danger" [disabled]="restoring()" (click)="confirmRollbackAction()">
+                  @if (restoring()) { Restoring... } @else { Restore }
+                </button>
+                <button class="confirm-btn" (click)="cancelRollback()">Cancel</button>
+              </div>
+            </div>
+          } @else {
+            <button class="rollback-btn" (click)="requestRollback(v.id)">Restore</button>
+          }
+        </div>
+      } @empty {
+        <p class="empty-hint">No versions saved yet. Autosave runs every 10 seconds while editing.</p>
+      }
+    </div>
+  } @else {
+    <div class="empty-hint">Open a canvas to view its version history.</div>
+  }
+</div>

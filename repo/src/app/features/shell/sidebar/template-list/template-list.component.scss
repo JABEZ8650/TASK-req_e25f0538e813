@@ -1,0 +1,27 @@
+.template-list { padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+
+.family-tabs {
+  display: flex; gap: 2px; flex-wrap: wrap;
+  .tab {
+    padding: 3px 8px; border: 1px solid #334155; border-radius: 4px; background: #0f172a;
+    color: #94a3b8; font-size: .6875rem; font-weight: 500; cursor: pointer; text-transform: capitalize;
+    &.active { background: rgba(79,70,229,.15); color: #818cf8; border-color: rgba(79,70,229,.3); }
+    &:hover:not(.active) { background: #1e293b; color: #e2e8f0; }
+  }
+}
+
+.list-items { display: flex; flex-direction: column; gap: 2px; }
+
+.template-item {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+  width: 100%; padding: 8px 10px; border: 1px solid #334155; border-radius: 6px;
+  background: #0f172a; color: #e2e8f0; text-align: left; cursor: pointer;
+  transition: background .12s, border-color .12s;
+  &:hover { background: #1e293b; border-color: #475569; }
+}
+
+.tpl-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.tpl-name { font-size: .8125rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tpl-desc { font-size: .6875rem; color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tpl-family { flex-shrink: 0; font-size: .5625rem; text-transform: uppercase; letter-spacing: .05em; padding: 2px 5px; border-radius: 3px; background: rgba(79,70,229,.15); color: #818cf8; white-space: nowrap; }
+.empty-hint { font-size: .75rem; color: #64748b; text-align: center; padding: 1rem 0; margin: 0; }

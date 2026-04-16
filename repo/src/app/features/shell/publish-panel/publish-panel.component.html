@@ -1,0 +1,132 @@
+<div class="publish-panel">
+  @if (canvas) {
+    <!-- ── Status banner ── -->
+    <div class="status-banner" [class.published]="isPublished">
+      <span class="status-dot"></span>
+      <span class="status-text">{{ isPublished ? 'Published' : 'Draft' }}</span>
+      @if (latestPublished) {
+        <span class="pub-time">Last published {{ formatTime(latestPublished.createdAt) }}</span>
+      }
+    </div>
+
+    <!-- ── Checklist ── -->
+    <div class="section">
+      <h4 class="section-title">Pre-Publish Checklist</h4>
+      <div class="checklist">
+        @for (item of checklist; track item.id) {
+          <div class="check-item" [class.passed]="item.passed" [class.failed]="!item.passed">
+            <span class="check-icon">{{ item.passed ? '✓' : '✗' }}</span>
+            <span class="check-label">{{ item.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ── Approval settings ── -->
+    <div class="section">
+      <h4 class="section-title">Approval</h4>
+      <label class="toggle-row">
+        <input type="checkbox" [checked]="approval?.enabled" (change)="toggleApproval()" />
+        <span>Require reviewer confirmation</span>
+      </label>
+      @if (approval?.enabled) {
+        <div class="reviewer-select">
+          <label class="field-label">Reviewer</label>
+          <select
+            class="select-input"
+            [ngModel]="approval?.reviewerProfileId ?? ''"
+            (ngModelChange)="onReviewerChange($event)"
+          >
+            <option value="">(none)</option>
+            @for (p of profiles(); track p.id) {
+              <option [value]="p.id">{{ p.displayName }}</option>
+            }
+          </select>
+        </div>
+      }
+    </div>
+
+    <!-- ── Pending approval flow ── -->
+    @if (publishSvc.pendingApproval(); as pending) {
+      <div class="section pending-section">
+        <h4 class="section-title">Pending Approval</h4>
+        <p class="pending-desc">
+          @if (pending.action === 'publish') {
+            Publish requested. Awaiting reviewer confirmation.
+          } @else {
+            Rollback to draft requested. Awaiting reviewer confirmation.
+          }
+        </p>
+
+        @if (isReviewer) {
+          <div class="reviewer-form">
+            <textarea
+              class="comment-input"
+              placeholder="Optional comment..."
+              [ngModel]="reviewerComment()"
+              (ngModelChange)="reviewerComment.set($event)"
+              rows="2"
+            ></textarea>
+            <div class="reviewer-actions">
+              @if (pending.action === 'publish') {
+                <button class="action-btn approve" [disabled]="publishing()" (click)="approvePublish()">Approve Publish</button>
+              } @else {
+                <button class="action-btn approve" (click)="approveRollbackToDraft()">Approve Rollback</button>
+              }
+              <button class="action-btn deny" (click)="denyPending()">Deny</button>
+            </div>
+          </div>
+        } @else {
+          <button class="action-btn cancel-btn" (click)="cancelPending()">Cancel Request</button>
+        }
+      </div>
+    } @else {
+      <!-- ── Publish / Unpublish actions ── -->
+      <div class="section">
+        @if (!isPublished) {
+          <button
+            class="publish-btn"
+            [disabled]="!allPassed || publishing()"
+            (click)="publish()"
+          >
+            @if (publishing()) { Publishing... } @else {
+              {{ approval?.enabled ? 'Request Publish' : 'Publish' }}
+            }
+          </button>
+          @if (!allPassed) {
+            <p class="hint">Fix all checklist items before publishing.</p>
+          }
+        } @else {
+          <button class="unpublish-btn" (click)="unpublish()">
+            {{ approval?.enabled ? 'Request Rollback to Draft' : 'Unpublish (Back to Draft)' }}
+          </button>
+        }
+      </div>
+    }
+
+    <!-- ── Latest published version info ── -->
+    @if (latestPublished) {
+      <div class="section">
+        <h4 class="section-title">Published Snapshot</h4>
+        <div class="pub-info">
+          <span>v{{ latestPublished.versionNumber }}</span>
+          <span>{{ formatTime(latestPublished.createdAt) }}</span>
+        </div>
+        @if (latestPublished.reviewerConfirmation; as rc) {
+          <div class="reviewer-badge">
+            Approved by {{ rc.reviewerDisplayName }}
+            @if (rc.comment) { — "{{ rc.comment }}" }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ── Draft vs Published diff ── -->
+    <div class="section">
+      <h4 class="section-title">Draft vs Published</h4>
+      <app-diff-viewer />
+    </div>
+  } @else {
+    <p class="empty-hint">Open a canvas to manage its publish status.</p>
+  }
+</div>

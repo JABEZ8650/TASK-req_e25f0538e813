@@ -1,0 +1,31 @@
+:host {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.node-bg {
+  transition: stroke 0.12s, stroke-width 0.12s;
+}
+
+.node-label {
+  pointer-events: none;
+  user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.selection-outline {
+  pointer-events: none;
+}
+
+.port {
+  cursor: crosshair;
+  transition: r 0.1s, fill 0.1s;
+
+  &:hover {
+    r: 7;
+    fill: #818cf8;
+  }
+}

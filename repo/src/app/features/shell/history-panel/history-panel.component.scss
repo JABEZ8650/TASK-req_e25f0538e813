@@ -1,0 +1,30 @@
+.history-panel { display: flex; flex-direction: column; height: 100%; }
+
+.history-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-bottom: 1px solid #334155;
+  h3 { margin: 0; font-size: .8125rem; font-weight: 600; color: #e2e8f0; text-transform: uppercase; letter-spacing: .05em; }
+}
+
+.history-actions { display: flex; gap: 4px; }
+
+.hist-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border: 1px solid #334155; border-radius: 4px;
+  background: #0f172a; color: #94a3b8; cursor: pointer;
+  &:hover:not(:disabled) { background: #334155; color: #e2e8f0; }
+  &:disabled { opacity: .35; cursor: not-allowed; }
+}
+
+.history-list { flex: 1; overflow-y: auto; padding: 4px 0; }
+
+.history-entry {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 14px; font-size: .75rem; color: #94a3b8;
+  border-left: 2px solid transparent;
+  &.current { border-left-color: #818cf8; color: #e2e8f0; background: rgba(79,70,229,.06); }
+}
+
+.entry-desc { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.entry-time { flex-shrink: 0; font-size: .625rem; color: #64748b; margin-left: 8px; font-variant-numeric: tabular-nums; }
+.empty-hint { font-size: .75rem; color: #64748b; text-align: center; padding: 2rem 1rem; margin: 0; }

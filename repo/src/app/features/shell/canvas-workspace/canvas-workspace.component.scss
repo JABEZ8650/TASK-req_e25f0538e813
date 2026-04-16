@@ -1,0 +1,86 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+// ─── Toolbar ───
+
+.workspace-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+  flex-shrink: 0;
+}
+
+.toolbar-group { display: flex; align-items: center; gap: 2px; }
+
+.toolbar-btn {
+  padding: 4px 10px;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  background: #0f172a;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) { background: #334155; color: #e2e8f0; border-color: #475569; }
+  &:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  &.icon-btn {
+    display: flex; align-items: center; justify-content: center;
+    min-width: 28px; padding: 4px 6px; text-align: center;
+    font-size: 0.875rem; line-height: 1;
+  }
+}
+
+.toolbar-separator { width: 1px; height: 20px; background: #334155; margin: 0 6px; }
+.zoom-controls { margin-left: auto; }
+.zoom-label { min-width: 42px; text-align: center; font-size: 0.75rem; color: #94a3b8; font-variant-numeric: tabular-nums; }
+
+// ─── Canvas ───
+
+.workspace-canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: #0f172a;
+  background-image: radial-gradient(circle, #1e293b 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: var(--grid-ox) var(--grid-oy);
+
+  &.panning { cursor: grab; }
+  &.connecting { cursor: crosshair; }
+}
+
+.canvas-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+// ─── In-canvas overlays ───
+
+.connect-preview { pointer-events: none; }
+
+.alignment-guide {
+  stroke: #f59e0b;
+  stroke-width: 0.5;
+  stroke-dasharray: 4 3;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+// ─── Empty state ───
+
+.empty-state {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 2rem;
+}
+.empty-icon { margin-bottom: 1.5rem; opacity: 0.5; }
+.empty-title { font-size: 1.125rem; font-weight: 600; color: #94a3b8; margin: 0 0 0.5rem; }
+.empty-text { font-size: 0.875rem; color: #64748b; margin: 0; max-width: 300px; line-height: 1.5; }

@@ -1,0 +1,14 @@
+<div class="right-drawer">
+  <div class="drawer-header">
+    <h3>Properties</h3>
+  </div>
+  <div class="drawer-body">
+    @if (store.selectedNode(); as node) {
+      <app-node-properties [node]="node" />
+    } @else if (store.selectedEdge()) {
+      <app-edge-properties [edge]="store.selectedEdge()!" />
+    } @else {
+      <p class="drawer-empty">Select a node or connector to view its properties.</p>
+    }
+  </div>
+</div>

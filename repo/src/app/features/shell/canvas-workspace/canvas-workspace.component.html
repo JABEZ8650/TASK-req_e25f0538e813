@@ -1,0 +1,103 @@
+@if (store.currentCanvas(); as canvas) {
+  <!-- ── Toolbar ── -->
+  <div class="workspace-toolbar">
+    <div class="toolbar-group">
+      @for (nt of toolbarNodes; track nt.type) {
+        <button class="toolbar-btn" [title]="'Add ' + nt.label" (click)="addNode(nt.type)">{{ nt.label }}</button>
+      }
+    </div>
+    <div class="toolbar-separator"></div>
+    <div class="toolbar-group">
+      <button class="toolbar-btn icon-btn" title="Undo (Ctrl+Z)" [disabled]="!history.canUndo()" (click)="store.undo()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M3 7l3-3M3 7l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="toolbar-btn icon-btn" title="Redo (Ctrl+Shift+Z)" [disabled]="!history.canRedo()" (click)="store.redo()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 7H3M11 7l-3-3M11 7l-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="toolbar-separator"></div>
+    <div class="toolbar-group">
+      <button class="toolbar-btn" title="Export JSON" (click)="exportJson()">JSON</button>
+      <button class="toolbar-btn" title="Export SVG" (click)="exportSvg()">SVG</button>
+      <button class="toolbar-btn" title="Export PNG" (click)="exportPng()">PNG</button>
+    </div>
+    <div class="toolbar-separator"></div>
+    <div class="toolbar-group zoom-controls">
+      <button class="toolbar-btn icon-btn" title="Zoom out" (click)="store.zoomOut()">−</button>
+      <span class="zoom-label">{{ store.zoomPercent() }}%</span>
+      <button class="toolbar-btn icon-btn" title="Zoom in" (click)="store.zoomIn()">+</button>
+      <button class="toolbar-btn" title="Reset zoom" (click)="store.resetZoom()">Fit</button>
+    </div>
+  </div>
+
+  <!-- ── Canvas area ── -->
+  <div
+    class="workspace-canvas"
+    [class.panning]="isPanning"
+    [class.connecting]="isConnecting"
+    [style.--grid-size.px]="gridSizePx()"
+    [style.--grid-ox.px]="gridOffsetX()"
+    [style.--grid-oy.px]="gridOffsetY()"
+  >
+    <svg #svgEl class="canvas-svg"
+      (mousedown)="onCanvasMouseDown($event)"
+      (wheel)="onWheel($event)"
+    >
+      <svg:g [attr.transform]="viewTransform()">
+        <!-- Edges layer (behind nodes) -->
+        @for (edge of store.edges(); track edge.id) {
+          @if (store.nodeById(edge.sourceNodeId); as src) {
+            @if (store.nodeById(edge.targetNodeId); as tgt) {
+              <svg:g appCanvasEdge
+                [edge]="edge"
+                [sourceNode]="src"
+                [targetNode]="tgt"
+                [selected]="store.selectedEdgeId() === edge.id"
+                (edgeMouseDown)="onEdgeMouseDown($event, edge)"
+              ></svg:g>
+            }
+          }
+        }
+
+        <!-- Connector preview while dragging -->
+        @if (connectPreviewPath(); as path) {
+          <svg:path class="connect-preview" [attr.d]="path" fill="none" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="6 3" opacity="0.7"/>
+        }
+
+        <!-- Alignment guides -->
+        @for (guide of activeGuides(); track $index) {
+          @if (guide.axis === 'x') {
+            <svg:line class="alignment-guide" [attr.x1]="guide.value" y1="-5000" [attr.x2]="guide.value" y2="5000" />
+          } @else {
+            <svg:line class="alignment-guide" x1="-5000" [attr.y1]="guide.value" x2="5000" [attr.y2]="guide.value" />
+          }
+        }
+
+        <!-- Nodes layer -->
+        @for (node of store.nodes(); track node.id) {
+          <svg:g appCanvasNode
+            [node]="node"
+            [selected]="store.selectedNodeId() === node.id"
+            [showPorts]="isConnecting"
+            (nodeMouseDown)="onNodeMouseDown($event, node)"
+            (portDragStart)="onPortDragStart($event, node)"
+          ></svg:g>
+        }
+      </svg:g>
+    </svg>
+  </div>
+} @else {
+  <!-- ── Empty state ── -->
+  <div class="empty-state">
+    <div class="empty-icon">
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+        <rect x="8" y="8" width="48" height="48" rx="4" stroke="#334155" stroke-width="2" stroke-dasharray="6 4"/>
+        <circle cx="24" cy="24" r="6" stroke="#475569" stroke-width="1.5"/>
+        <circle cx="40" cy="40" r="6" stroke="#475569" stroke-width="1.5"/>
+        <line x1="29" y1="27" x2="35" y2="37" stroke="#475569" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <h2 class="empty-title">No canvas open</h2>
+    <p class="empty-text">Create a new canvas from the sidebar or select an existing one.</p>
+  </div>
+}

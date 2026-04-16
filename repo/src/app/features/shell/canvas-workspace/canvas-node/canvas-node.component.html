@@ -1,0 +1,57 @@
+<!-- Selection outline -->
+@if (selected) {
+  <svg:rect
+    class="selection-outline"
+    [attr.x]="node.position.x - 4"
+    [attr.y]="node.position.y - 4"
+    [attr.width]="node.size.width + 8"
+    [attr.height]="node.size.height + 8"
+    [attr.rx]="node.style.borderRadius + 3"
+    fill="none"
+    stroke="#818cf8"
+    stroke-width="1.5"
+    stroke-dasharray="6 3"
+    opacity="0.7"
+  />
+}
+
+<!-- Node background -->
+<svg:rect
+  class="node-bg"
+  [attr.x]="node.position.x"
+  [attr.y]="node.position.y"
+  [attr.width]="node.size.width"
+  [attr.height]="node.size.height"
+  [attr.rx]="node.style.borderRadius"
+  [attr.fill]="node.style.fillColor"
+  [attr.stroke]="selected ? '#818cf8' : node.style.strokeColor"
+  [attr.stroke-width]="selected ? 2 : node.style.strokeWidth"
+  [attr.opacity]="node.style.opacity"
+/>
+
+<!-- Label text -->
+<svg:text
+  class="node-label"
+  [attr.x]="textX"
+  [attr.y]="textY"
+  text-anchor="middle"
+  dominant-baseline="central"
+  [attr.fill]="node.style.fontColor"
+  [attr.font-size]="node.style.fontSize"
+>{{ displayLabel }}</svg:text>
+
+<!-- Connection ports -->
+@if (selected || showPorts) {
+  @for (p of ports; track p.id) {
+    <svg:circle
+      class="port"
+      [attr.cx]="p.x"
+      [attr.cy]="p.y"
+      r="5"
+      fill="#0f172a"
+      stroke="#818cf8"
+      stroke-width="1.5"
+      (mousedown)="onPortMouseDown($event, p.id)"
+    />
+  }
+}

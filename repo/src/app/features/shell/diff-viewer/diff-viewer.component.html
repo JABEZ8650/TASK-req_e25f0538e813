@@ -1,0 +1,71 @@
+<div class="diff-viewer">
+  @if (!hasPublished) {
+    <p class="hint">No published version to compare against.</p>
+  } @else if (!hasDiff) {
+    <button class="compute-btn" [disabled]="diffSvc.comparing()" (click)="compute()">
+      @if (diffSvc.comparing()) { Comparing... } @else { Compare Draft vs Published }
+    </button>
+  } @else {
+    @if (diffSvc.diffResult(); as diff) {
+      <div class="diff-summary">
+        <span class="change-count">{{ totalChanges }} changes</span>
+        <button class="refresh-btn" (click)="compute()">Refresh</button>
+      </div>
+
+      <!-- Nodes -->
+      <div class="diff-section">
+        <h4>Nodes</h4>
+        @if (diff.addedNodes.length) {
+          <div class="diff-group added">
+            <span class="group-label">+ {{ diff.addedNodes.length }} added</span>
+            @for (n of diff.addedNodes; track n.id) {
+              <span class="diff-item">{{ n.label }}</span>
+            }
+          </div>
+        }
+        @if (diff.removedNodes.length) {
+          <div class="diff-group removed">
+            <span class="group-label">- {{ diff.removedNodes.length }} removed</span>
+            @for (n of diff.removedNodes; track n.id) {
+              <span class="diff-item">{{ n.label }}</span>
+            }
+          </div>
+        }
+        @if (diff.modifiedNodes.length) {
+          <div class="diff-group modified">
+            <span class="group-label">~ {{ diff.modifiedNodes.length }} modified</span>
+            @for (m of diff.modifiedNodes; track m.after.id) {
+              <div class="diff-item mod">
+                <span>{{ m.after.label }}</span>
+                <span class="mod-changes">{{ m.changes.join(', ') }}</span>
+              </div>
+            }
+          </div>
+        }
+        @if (diff.unchangedNodeCount) {
+          <span class="unchanged">{{ diff.unchangedNodeCount }} unchanged</span>
+        }
+      </div>
+
+      <!-- Edges -->
+      <div class="diff-section">
+        <h4>Connectors</h4>
+        @if (diff.addedEdges.length) {
+          <span class="diff-group added"><span class="group-label">+ {{ diff.addedEdges.length }} added</span></span>
+        }
+        @if (diff.removedEdges.length) {
+          <span class="diff-group removed"><span class="group-label">- {{ diff.removedEdges.length }} removed</span></span>
+        }
+        @if (diff.modifiedEdges) {
+          <span class="diff-group modified"><span class="group-label">~ {{ diff.modifiedEdges }} modified</span></span>
+        }
+        @if (diff.unchangedEdgeCount) {
+          <span class="unchanged">{{ diff.unchangedEdgeCount }} unchanged</span>
+        }
+        @if (!diff.addedEdges.length && !diff.removedEdges.length && !diff.modifiedEdges && !diff.unchangedEdgeCount) {
+          <span class="unchanged">No connectors</span>
+        }
+      </div>
+    }
+  }
+</div>

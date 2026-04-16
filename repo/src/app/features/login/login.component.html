@@ -1,0 +1,95 @@
+<div class="login-backdrop">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#4F46E5"/>
+          <path d="M12 14h16M12 20h16M12 26h10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1>Diagram Studio</h1>
+      <p class="subtitle">Local-first offline diagram editor</p>
+    </div>
+
+    <div class="login-tabs">
+      <button
+        class="tab"
+        [class.active]="isLogin()"
+        (click)="mode.set('login')"
+      >Sign In</button>
+      <button
+        class="tab"
+        [class.active]="!isLogin()"
+        (click)="mode.set('register')"
+      >Register</button>
+    </div>
+
+    <form class="login-form" (ngSubmit)="submit()">
+      <div class="field">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          [ngModel]="username()"
+          (ngModelChange)="username.set($event)"
+          name="username"
+          placeholder="Enter your username"
+          autocomplete="username"
+          maxlength="50"
+        />
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          [ngModel]="password()"
+          (ngModelChange)="password.set($event)"
+          name="password"
+          [attr.placeholder]="isLogin() ? 'Enter your password' : 'Minimum ' + minPasswordLength + ' characters'"
+          autocomplete="current-password"
+          [attr.minlength]="minPasswordLength"
+        />
+      </div>
+
+      @if (!isLogin()) {
+        <div class="field">
+          <label for="confirmPassword">Confirm Password</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            [ngModel]="confirmPassword()"
+            (ngModelChange)="confirmPassword.set($event)"
+            name="confirmPassword"
+            placeholder="Confirm your password"
+            autocomplete="new-password"
+            [attr.minlength]="minPasswordLength"
+          />
+        </div>
+      }
+
+      @if (error()) {
+        <div class="error-banner" role="alert">
+          {{ error() }}
+        </div>
+      }
+
+      <button
+        type="submit"
+        class="submit-btn"
+        [disabled]="!formValid() || loading()"
+      >
+        @if (loading()) {
+          <span class="spinner"></span>
+        }
+        {{ isLogin() ? 'Sign In' : 'Create Profile' }}
+      </button>
+    </form>
+
+    <p class="hint">
+      All data is stored locally on this device.
+      No internet connection required.
+    </p>
+  </div>
+</div>

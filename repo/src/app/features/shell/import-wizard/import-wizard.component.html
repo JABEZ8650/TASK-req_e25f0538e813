@@ -1,0 +1,148 @@
+<div class="wizard-overlay" (click)="close()">
+  <div class="wizard-panel" (click)="$event.stopPropagation()">
+    <div class="wizard-header">
+      <h2>Import Data</h2>
+      <button class="close-btn" (click)="close()">&times;</button>
+    </div>
+
+    <!-- ── Step indicators ── -->
+    <div class="step-bar">
+      <span class="step" [class.active]="importSvc.step() === 'upload'" [class.done]="importSvc.step() !== 'upload'">1. Upload</span>
+      <span class="step-sep"></span>
+      <span class="step" [class.active]="importSvc.step() === 'mapping'" [class.done]="importSvc.step() === 'preview' || importSvc.step() === 'done'">2. Map Fields</span>
+      <span class="step-sep"></span>
+      <span class="step" [class.active]="importSvc.step() === 'preview'" [class.done]="importSvc.step() === 'done'">3. Preview</span>
+      <span class="step-sep"></span>
+      <span class="step" [class.active]="importSvc.step() === 'done'">4. Done</span>
+    </div>
+
+    <div class="wizard-body">
+      <!-- ════════ STEP 1: Upload ════════ -->
+      @if (importSvc.step() === 'upload') {
+        <div class="upload-section">
+          <div class="upload-zone" (click)="fileInput.click()">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+              <path d="M18 24V8M18 8L12 14M18 8L24 14" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 24v4a2 2 0 002 2h20a2 2 0 002-2v-4" stroke="#64748b" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <p>Click to select a CSV or JSON file</p>
+            <span class="upload-hint">Max 1,000 rows per import</span>
+          </div>
+          <input #fileInput type="file" accept=".csv,.json" hidden (change)="onFileSelected($event)" />
+
+          <div class="divider"><span>or paste content</span></div>
+
+          <textarea
+            class="paste-area"
+            [(ngModel)]="pasteContent"
+            placeholder="Paste JSON, CSV, or HTML table content here..."
+            rows="6"
+          ></textarea>
+          <button class="primary-btn" [disabled]="!pasteContent.trim()" (click)="onPaste()">Parse Pasted Content</button>
+        </div>
+
+        @if (importSvc.parseError()) {
+          <div class="error-banner">{{ importSvc.parseError() }}</div>
+        }
+      }
+
+      <!-- ════════ STEP 2: Mapping ════════ -->
+      @if (importSvc.step() === 'mapping') {
+        <div class="mapping-section">
+          <p class="section-info">
+            {{ importSvc.rawRecordCount() }} rows detected from <strong>{{ importSvc.fileName() }}</strong>.
+            Map source columns to metadata fields.
+          </p>
+
+          <div class="mapping-table">
+            <div class="mapping-header">
+              <span>Source Column</span>
+              <span>Maps To</span>
+            </div>
+            @for (m of importSvc.mappings(); track m.sourceColumn) {
+              <div class="mapping-row">
+                <span class="col-name">{{ m.sourceColumn }}</span>
+                <select
+                  class="map-select"
+                  [ngModel]="m.targetField ?? ''"
+                  (ngModelChange)="onMappingChange(m.sourceColumn, $event)"
+                >
+                  <option value="">(skip)</option>
+                  @for (f of canonicalFields; track f) {
+                    <option [value]="f">{{ f }}</option>
+                  }
+                </select>
+              </div>
+            }
+          </div>
+
+          <div class="wizard-actions">
+            <button class="secondary-btn" (click)="startOver()">Back</button>
+            <button class="primary-btn" (click)="goToPreview()">Preview</button>
+          </div>
+        </div>
+      }
+
+      <!-- ════════ STEP 3: Preview ════════ -->
+      @if (importSvc.step() === 'preview') {
+        <div class="preview-section">
+          <div class="preview-summary">
+            <span class="accept-count">{{ importSvc.acceptedRows().length }} accepted</span>
+            <span class="reject-count">{{ importSvc.rejectedRows().length }} rejected</span>
+          </div>
+
+          <div class="preview-list">
+            @for (row of importSvc.validatedRows(); track row.rowIndex) {
+              <div class="preview-row" [class.rejected]="!row.accepted">
+                <div class="row-toggle">
+                  <input type="checkbox" [checked]="row.accepted" (change)="toggleRow(row.rowIndex)" />
+                </div>
+                <div class="row-content">
+                  <div class="row-fields">
+                    @for (f of row.fields; track f.key) {
+                      <span class="field-pill" [class.flagged]="!!f.flagged" [class.unmapped]="!f.normalized" [title]="f.flagged || ''">
+                        <strong>{{ f.key }}:</strong> {{ f.value || '(empty)' }}
+                      </span>
+                    }
+                  </div>
+                  @if (row.errors.length > 0) {
+                    <div class="row-errors">
+                      @for (err of row.errors; track err) {
+                        <span class="error-tag">{{ err }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="wizard-actions">
+            <button class="secondary-btn" (click)="startOver()">Start Over</button>
+            <button class="primary-btn" [disabled]="importSvc.acceptedRows().length === 0" (click)="commit()">
+              Import {{ importSvc.acceptedRows().length }} Rows
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ════════ STEP 4: Done ════════ -->
+      @if (importSvc.step() === 'done') {
+        <div class="done-section">
+          <div class="done-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="20" stroke="#22c55e" stroke-width="2"/>
+              <path d="M16 24l5 5 11-11" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Import Complete</h3>
+          <p>{{ commitCount }} nodes added to the canvas.</p>
+          <div class="wizard-actions">
+            <button class="secondary-btn" (click)="startOver()">Import More</button>
+            <button class="primary-btn" (click)="close()">Done</button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

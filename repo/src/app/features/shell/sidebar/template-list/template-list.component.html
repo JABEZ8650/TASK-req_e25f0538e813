@@ -1,0 +1,22 @@
+<div class="template-list">
+  <div class="family-tabs">
+    <button class="tab" [class.active]="activeFamily() === 'all'" (click)="setFamily('all')">All</button>
+    @for (f of families; track f) {
+      <button class="tab" [class.active]="activeFamily() === f" (click)="setFamily(f)">{{ f }}</button>
+    }
+  </div>
+
+  <div class="list-items">
+    @for (tpl of filtered; track tpl.id) {
+      <button class="template-item" (click)="instantiate(tpl)">
+        <div class="tpl-info">
+          <span class="tpl-name">{{ tpl.name }}</span>
+          <span class="tpl-desc">{{ tpl.description }}</span>
+        </div>
+        <span class="tpl-family">{{ tpl.family }}</span>
+      </button>
+    } @empty {
+      <p class="empty-hint">No templates in this category.</p>
+    }
+  </div>
+</div>

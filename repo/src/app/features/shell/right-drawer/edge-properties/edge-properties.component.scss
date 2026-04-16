@@ -1,0 +1,24 @@
+.props { display: flex; flex-direction: column; gap: 14px; }
+.prop-section { display: flex; flex-direction: column; gap: 4px; }
+.prop-label { font-size: .6875rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; }
+.prop-input {
+  width: 100%; padding: 5px 8px; background: #0f172a; border: 1px solid #334155;
+  border-radius: 4px; color: #f1f5f9; font-size: .8125rem;
+  &::placeholder { color: #64748b; }
+  &:focus { outline: none; border-color: #818cf8; }
+}
+select.prop-input { cursor: pointer; }
+.type-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; background: rgba(79,70,229,.15); color: #818cf8; font-size: .75rem; font-weight: 500; width: fit-content; }
+.color-field { display: flex; align-items: center; gap: 6px; }
+.color-input {
+  width: 28px; height: 28px; padding: 0; border: 1px solid #334155; border-radius: 4px; background: none; cursor: pointer;
+  &::-webkit-color-swatch-wrapper { padding: 2px; }
+  &::-webkit-color-swatch { border: none; border-radius: 2px; }
+}
+.color-label { font-size: .75rem; color: #94a3b8; }
+.prop-footer { margin-top: 8px; padding-top: 12px; border-top: 1px solid #334155; }
+.delete-btn {
+  width: 100%; padding: 6px 12px; border: 1px solid rgba(239,68,68,.3); border-radius: 5px;
+  background: rgba(239,68,68,.08); color: #f87171; font-size: .8125rem; font-weight: 500; cursor: pointer;
+  &:hover { background: rgba(239,68,68,.15); }
+}
