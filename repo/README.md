@@ -1,7 +1,42 @@
 # Diagram Studio
 
+**Project type: web** (pure frontend Angular SPA)
+
 Local-first offline diagram editor built with Angular 17 and TypeScript.  
 All data stays on-device — no backend, no cloud, no external APIs.
+
+---
+
+## Quick Start (Docker)
+
+```bash
+docker-compose up --build
+```
+
+The app will be available at: **http://localhost:4200**
+
+### Verification Steps
+
+1. Open **http://localhost:4200** in a browser.
+2. You will see the login screen.
+3. Click the **Register** tab.
+4. Enter a username (e.g. `reviewer`) and a password (minimum 8 characters). Click **Create Profile**.
+5. You are now in the main app shell with a left sidebar, center canvas area, and toolbar.
+6. Click **+ New Canvas** in the sidebar, enter a name, and click **Create**.
+7. Use the toolbar buttons (Start, Process, Decision, End, Text) to add nodes.
+8. Drag nodes to reposition — they snap to the 8 px grid.
+9. Select a node, then drag from its port circles to another node to create a connector.
+10. Click the **JSON**, **SVG**, or **PNG** toolbar buttons to export.
+
+### Authentication
+
+There are no preset credentials. This is a local-only app where profiles are created on-device.
+
+**To log in for the first time:** switch to the **Register** tab on the login screen, create a username and password (minimum 8 characters), and you will be logged in automatically.
+
+Multiple local profiles can be created. Each profile has its own canvases and data.
+
+---
 
 ## Implementation Status — Complete
 
@@ -129,13 +164,6 @@ import, versioning, publishing, notifications, export, and multi-tab conflict ha
   - LocalStorage: session state, preferences, DND settings, template seed version
   - IndexedDB: 8 object stores (profiles, canvases, nodes, edges, templates, notifications, imports, versions)
 
-## Development
-
-```bash
-npm start        # dev server at http://localhost:4200
-npm run build    # production build
-```
-
 ## Tech Stack
 
 - Angular 17 (standalone components, signals, effects)
@@ -149,6 +177,7 @@ npm run build    # production build
 - Web Crypto API (SHA-256 hashing)
 - Angular Service Worker
 - Karma + Jasmine (unit tests)
+- Docker + nginx (production serving)
 
 ## Project Structure
 
@@ -192,15 +221,27 @@ src/app/
 
 ## Testing
 
-56 unit tests covering core business logic:
+145 tests across services, components, guards, workers, and utilities:
 
 ```bash
-npm test             # interactive Karma runner
+npm test             # interactive Karma runner (requires local Chrome)
 npx ng test --watch=false --browsers=ChromeHeadless  # CI-friendly headless run
 ```
 
-Test coverage: CSV parsing, skills normalization, metadata normalization, salary/experience parsing,
-row validation, publish checklist, snap-to-grid, alignment guides.
+**Test coverage by layer:**
+- **Services** (3): auth (login/lockout/cooldown/register/session), history (push/undo/redo/cap/clear), notification (send/read/dismiss/DND/template resolution)
+- **Components** (3): login (form validation/submit/modes/rendering), canvas-workspace (empty state/toolbar/export/grid), import-wizard (steps/paste/mapping/error/done)
+- **Guard** (1): auth guard (authenticated/session restore/redirect)
+- **Workers** (2): diff logic (add/remove/modify/mixed diffs), export logic (bounds/escaping/port positions)
+- **Utilities** (6): CSV parsing, skills normalization, metadata normalization, row validation, publish checklist, snap-to-grid/alignment
+
+## Local Development (without Docker)
+
+```bash
+npm install
+npm start        # dev server at http://localhost:4200
+npm run build    # production build
+```
 
 ## Bounded Implementations
 
